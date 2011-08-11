@@ -524,6 +524,8 @@ module RightAws
       validate_multipart_params(params)
       init_req_hash = generate_rest_request('POST', params[:headers].merge(:url => "#{params[:bucket]}/#{CGI::escape params[:key]}?uploads"))
       request_info(init_req_hash, S3InitMultipartParser.new)
+    rescue
+      on_exception
     end
 
     def store_part(params)
@@ -533,6 +535,8 @@ module RightAws
         params[:headers].merge(:url => "#{params[:bucket]}/#{CGI::escape params[:key]}?partNumber=#{params[:part_number]}&uploadId=#{params[:upload_id]}",
         :data => params[:data]))
       request_info(part_req_hash, S3HttpResponseHeadParser.new)
+    rescue
+      on_exception
     end
 
     def complete_store_object_multipart(params)
@@ -541,6 +545,8 @@ module RightAws
       data = complete_body(params[:e_tags])
       complete_req_hash = generate_rest_request('POST', {:url => "#{params[:bucket]}/#{CGI::escape params[:key]}?uploadId=#{params[:upload_id]}", :data => data})
       request_info(complete_req_hash, S3CompleteMultipartParser.new)
+    rescue
+      on_exception
     end
 
     private
@@ -571,7 +577,7 @@ module RightAws
     end
 
     def validate_etags(params)
-      params[:e_tags].sort {|x,y| y[:part_number] <=> x[:part_number] }
+      params[:e_tags].sort {|x,y| x[:part_number] <=> y[:part_number] }
     end
 
     def validate_headers(params)
