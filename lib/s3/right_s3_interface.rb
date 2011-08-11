@@ -561,7 +561,7 @@ module RightAws
     end
 
     def validate_part_size(params)
-      (params[:part_size].empty? || params[:part_size] < 5 * 1024 * 1024) ? 5 * 1024 * 1024 : params[:part_size]
+      (params[:part_size].nil? || params[:part_size] < 5 * 1024 * 1024) ? 5 * 1024 * 1024 : params[:part_size]
     end
 
     def validate_part_number(params)
